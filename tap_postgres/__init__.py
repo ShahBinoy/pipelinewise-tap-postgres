@@ -274,10 +274,12 @@ def register_type_adapters(conn_config):
 
 def do_sync(conn_config, catalog, default_replication_method, state, state_file=None):
     """
-    Orchestrates sync of all streams
+    Orche`strates sync of all streams
     """
     currently_syncing = singer.get_currently_syncing(state)
+
     streams = list(filter(is_selected_via_metadata, catalog['streams']))
+    #refresh_streams_schema(conn_config, streams)
     streams.sort(key=lambda s: s['tap_stream_id'])
     LOGGER.info("Selected streams: %s ", [s['tap_stream_id'] for s in streams])
     if any_logical_streams(streams, default_replication_method):
@@ -287,7 +289,7 @@ def do_sync(conn_config, catalog, default_replication_method, state, state_file=
     else:
         end_lsn = None
 
-    refresh_streams_schema(conn_config, streams)
+
 
     sync_method_lookup, traditional_streams, logical_streams = \
         sync_method_for_streams(streams, state, default_replication_method)
